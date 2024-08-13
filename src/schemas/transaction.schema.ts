@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
-@Schema({ timestamps: true })
-export class Transaction{
+export type TransactionDocument = Transaction & Document;
+
+@Schema({ timestamps: true, toJSON: { virtuals: true, versionKey: false } })
+export class Transaction {
   @Prop()
   id: string;
 
@@ -17,12 +19,15 @@ export class Transaction{
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   userId: Types.ObjectId;
-
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
-  updatedAt: string;
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
+
+// Transform the _id field to id
+TransactionSchema.set('toJSON', {
+  transform: (ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    return ret;
+  },
+});
