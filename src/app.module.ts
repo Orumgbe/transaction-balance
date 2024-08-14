@@ -9,7 +9,7 @@ import { TransactionService } from './services/transaction.service';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1/streamslab'),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Transaction.name, schema: TransactionSchema },
